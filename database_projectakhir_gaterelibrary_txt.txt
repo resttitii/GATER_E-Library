@@ -1,0 +1,154 @@
+--- create sequence untuk ... ---
+create sequence bk_id start 2022011001
+
+
+--- create tabel buku dengan 4 kolom => id, buku, pengarang, kategori ---
+create table tbl_buku
+(
+	id character varying(100) default 'BK' || nextval ('bk_id') primary key,
+	buku character varying(100),
+	pengarang character varying(50),
+	kategori character varying(20)
+)
+
+
+--- select tabel buku ---
+select * from tbl_buku
+
+
+--- create some function ---
+--- insert function
+create function bk_insert
+(
+	_buku character varying,
+	_pengarang character varying,
+	_kategori character varying
+) returns int as
+$$
+begin
+	insert into tbl_buku
+	(
+		buku,
+		pengarang,
+		kategori
+	)values
+	(
+		_buku,
+		_pengarang,
+		_kategori
+	);
+	if found then 
+		return 1;
+	else
+		return 0;
+	end if;
+end
+$$
+language plpgsql
+
+
+--- update function
+create  function bk_update
+(
+	_id character varying,
+	_buku character varying,
+	_pengarang character varying,
+	_kategori character varying
+)returns int as
+$$
+begin
+	update tbl_buku
+	set
+		buku = _buku,
+		pengarang = _pengarang,
+		kategori = _kategori
+	where id = _id;
+	if found then 
+		return 1;
+	else
+		return 0;
+	end if;
+end 
+$$
+language plpgsql
+
+
+--- delete function
+create function bk_delete (_id character varying)
+returns int as
+$$
+begin
+	delete from tbl_buku where id = _id;
+	if found then
+		return 1;
+	else
+		return 0;
+	end if;
+end
+$$
+language plpgsql
+
+
+--- select function
+-- 1. create or replace function, 2. drop function 3. create or replace function (excute kembali)
+drop function bk_select()
+create or replace function bk_select()
+returns table
+(
+	_id character varying,
+	_buku character varying,
+	_pengarang character varying,
+	_kategori character varying
+)as
+$$
+begin 
+	return query
+	select id, buku, pengarang, kategori from tbl_buku;
+end
+$$ 
+language plpgsql
+
+
+--- select 
+select * from bk_select()
+
+
+
+--- database buku Gater E-Library ---
+insert into tbl_buku(buku, pengarang, kategori)
+values ('Sebuah Seni Untuk Bersikap Bodoamat', 'Mark Manson', 'Self Improvement'),
+('Tak Mungkin Membuat Semua Orang Senang', 'Jeong Moon Jeong', 'Self Improvement'),
+('Sapien', 'Yuval Noah Harari', 'Self Improvement'),
+('Rich Dad Poor Dad', 'Robert T Kiyosaki', 'Self Improvement'),
+('Filosofi Teras', 'Henry Manampiring', 'Self Improvement'),
+('Bicara Itu Ada Seninya', 'Oh Su Hyang', 'Self Improvement'),
+('Anomali', 'Elnov', 'Self Improvement'),
+('Laut Bercerita', 'Leila S Chudori', 'Novel'),
+('How To Win & Influence People', 'Dale Carnegie', 'Self Improvement'),
+('Berani Tidak Disukai', 'Ichiro Kishimi & Frumitake Koga', 'Self Improvement'),
+('Atomic Habits', 'James Clear', 'Self Improvement'),
+('Demon Slayer: Kimetsu no Yaiba 03', 'Koyoharu Gotouge', 'Komik'),
+('My Hero Academia 13', 'Kohei Hikoshi', 'Komik'),
+('Attack On Titan 29', 'Hajime Isayama', 'Komik'),
+('Black Clover 15', 'Yuki Tabata', 'Komik'),
+('Tokyo Ghoul RE 09', 'Sui Ishida', 'Komik'),
+('Detektif Conan 97', 'Aoyama Gosho', 'Komik'),
+('Spy x Family 1', 'Tatsuya Endo', 'Komik'),
+('Jujutsu Kaise 4', 'Gege Akutami', 'Komik'),
+('I Want To Die But I Want To Eat Tteopokki', 'Baek Se Hee', 'Novel'),
+('Your Name', 'Shinkai Makoto', 'Novel'),
+('La Petit Prince', 'Antoine De Saint Exupery', 'Novel'),
+('Perempuan Yang Menangis Kepada Bulan Hitam', 'Dian Purnomo', 'Novel'),
+('Kim Ji-Yeong: Lahir Tahun 1982', 'Cho Nam Joo', 'Novel'),
+('Selena', 'Tere Liye', 'Novel'),
+('Bringin Up Bebe', 'Pamela Druckeeman', 'Parenting'),
+('Karate In You', 'Eni Kusuma', 'Parenting'),
+('The Montessori Toddler', 'Simone Davies', 'Parenting'),
+('Start With Why', 'Simon Sinek', 'Self Improvement'),
+('Mantappu Jiwa', 'Jerome Polin Sijabat', 'Novel'),
+('Cantik Itu Luka', 'Eka Kurniawan', 'Novel'),
+('Loving Wounded Soul', 'Regis Machdy', 'Self Improvement'),
+('Pulang', 'Leila S Chudori', 'Novel'),
+('Buku Minta Disayang', 'Rintik Sedu', 'Novel'),
+('The Midnight Library', 'Matt Haig', 'Novel')
+					 
